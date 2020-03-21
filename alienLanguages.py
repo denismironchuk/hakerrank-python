@@ -8,7 +8,7 @@ if __name__ == '__main__':
     for _ in range(t):
         n,m = map(int, input().split())
 
-        d1 = datetime.now()
+        #d1 = datetime.now()
 
         step = [0]
         for i in range(1, n + 1):
@@ -34,28 +34,17 @@ if __name__ == '__main__':
                     step[i] = newVal
                     haveNonZero = haveNonZero or newVal > 0
 
-        d2 = datetime.now()
+        #d2 = datetime.now()
 
         sums = [s[1] for s in stepsCumSum]
-
-        res = [0 for _ in range(20)]
-        res.append(1)
-
-        rng = range(len(sums))
-
-        resLen = len(res)
+        res = [1] + [0 for _ in range(len(sums) - 1)]
 
         for _ in range(m):
-            newVal = 0
-            for j in rng:
-                newVal += (res[-1 - j] * sums[j]) % MOD
+            res = [sum([(a * b) % MOD for a, b in zip(sums, res)]) % MOD] + res[:-1]
 
-            res.append(newVal % MOD)
-            #resLen+=1
+        #d3 = datetime.now()
 
-        d3 = datetime.now()
+        #print((d2 - d1).total_seconds())
+        #print((d3 - d2).total_seconds())
 
-        print((d2 - d1).total_seconds())
-        print((d3 - d2).total_seconds())
-
-        print(res[-1])
+        print(res[0])
