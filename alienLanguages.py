@@ -18,7 +18,7 @@ if __name__ == '__main__':
 
         haveNonZero = True
         while (haveNonZero):
-            stepCumSum = [0 for _ in range(0, n + 1)]
+            stepCumSum = [0] * (n + 1)
             stepCumSum[-1] = step[-1]
             for i in range(n - 1, 0, -1):
                 stepCumSum[i] = (stepCumSum[i + 1] + step[i]) % MOD
@@ -37,7 +37,7 @@ if __name__ == '__main__':
         #d2 = datetime.now()
 
         sums = [s[1] for s in stepsCumSum]
-        res = [1] + [0 for _ in range(len(sums) - 1)]
+        res = [1] + [0] * (len(sums) - 1)
 
         for _ in range(m):
             res = [sum([(a * b) % MOD for a, b in zip(sums, res)]) % MOD] + res[:-1]
