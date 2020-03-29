@@ -18,7 +18,7 @@ if __name__ == '__main__':
         doubLen = len([a[i] for i in range(n - 1) if a[i] == a[i + 1]])
         elmntLen = n - doubLen
 
-        res = [fact(elmntLen), 0, 0]
+        res = [fact(elmntLen)] + [0] * (doubLen + 1)
 
         for i in range(doubLen):
             prev = 0
@@ -32,10 +32,8 @@ if __name__ == '__main__':
                 newVal %= MOD
 
                 prev = res[i]
-
                 res[i] = newVal
 
             elmntLen += 1
-            res.append(0)
 
         print(res[0])
