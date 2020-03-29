@@ -1,5 +1,3 @@
-from collections import Counter
-
 MOD = 10 ** 9 + 7
 TWO = (MOD + 1) // 2
 
@@ -15,19 +13,17 @@ if __name__ == '__main__':
 
     for _ in range(q):
         n = int(input())
-        a = map(int, input().split())
-        count = Counter(a)
-        elmntLen = len(count.keys())
+        a = list(map(int, input().split()))
+        a.sort()
+        doubLen = len([a[i] for i in range(n - 1) if a[i] == a[i + 1]])
+        elmntLen = n - doubLen
 
         res = [fact(elmntLen), 0, 0]
 
-        for val, cnt in count.items():
-            if (cnt == 1):
-                continue
-
+        for i in range(doubLen):
             prev = 0
-            for i in range(0, len(res) - 1):
-                newVal = (((res[i + 1] * (i + 1))) + ((res[i] * (elmntLen - i - 1)))) % MOD
+            for i in range(0, i + 2):
+                newVal = (((res[i + 1] * (i + 1)) % MOD) + ((res[i] * (elmntLen - i - 1))) % MOD) % MOD
 
                 newVal *= TWO
                 newVal %= MOD
