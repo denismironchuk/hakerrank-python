@@ -19,26 +19,27 @@ if __name__ == '__main__':
         count = Counter(a)
         elmntLen = len(count.keys())
 
-        res = [0, fact(elmntLen), 0, 0]
+        res = [fact(elmntLen), 0, 0]
 
         for val, cnt in count.items():
             if (cnt == 1):
                 continue
 
-            newRes = [0]
-            for i in range(1, len(res) - 1):
-                newRes += [(res[i + 1] * i) % MOD]
-                newRes[i] += (res[i] * (elmntLen - i)) % MOD
-                newRes[i] %= MOD
+            prev = 0
+            for i in range(0, len(res) - 1):
+                newVal = (((res[i + 1] * (i + 1))) + ((res[i] * (elmntLen - i - 1)))) % MOD
 
-                newRes[i] *= TWO
-                newRes[i] %= MOD
+                newVal *= TWO
+                newVal %= MOD
 
-                newRes[i] += res[i - 1]
-                newRes[i] %= MOD
+                newVal += prev
+                newVal %= MOD
+
+                prev = res[i]
+
+                res[i] = newVal
 
             elmntLen += 1
-            newRes += [0, 0]
-            res = newRes
+            res.append(0)
 
-        print(res[1])
+        print(res[0])
