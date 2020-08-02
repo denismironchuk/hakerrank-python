@@ -1,5 +1,3 @@
-from random import randrange
-
 class Node():
     def __init__(self, num):
         self.num = num
@@ -23,7 +21,7 @@ def markTree(nd, islandNum, color, processed):
 if __name__ == '__main__':
     n, m = map(int, input().split())
 
-    nodes = [-1] + [Node(i) for i in range(1, n + 1)]
+    nodes = [None] + [Node(i) for i in range(1, n + 1)]
 
     for _ in range(m):
         u, v = map(int, input().split())
@@ -74,13 +72,6 @@ if __name__ == '__main__':
 
         vals.append(val)
 
-    islandColorMap = {}
-
-    for i in range(island):
-        islandColorMap[i] = {0:[], 1:[]}
-        for node in islandsMap[i]:
-            islandColorMap[i][node.color].append(node)
-
     maxVal = sum(vals)
 
     dynTable = [[0 for column in range(maxVal + 1)] for row in range(len(valsCnt))]
@@ -125,7 +116,7 @@ if __name__ == '__main__':
 
     sum += disp
 
-    islandsToInvert = {}
+    islandsToInvert = set()
 
     while (sum != 0):
         if (cntTable[row_][sum] == 0):
@@ -135,18 +126,73 @@ if __name__ == '__main__':
             valsIslandsMap[valsOrder[row_]].pop()
             sum -= valsOrder[row_]
 
-    #TODO maybe incorrect from this place. check it tommorrow
-    print(disp, len(islandsToInvert))
+    print(disp, island - 1)
 
-    islands1 = []
-    islands2 = []
+    for islnd in islandsToInvert:
+        for node in islandsMap[islnd]:
+            node.inverseColor()
 
+    biColourIsland = -1
+
+    for islnd, nodes in islandsMap.items():
+        blackCount, whiteCount = 0, 0
+
+        for node in nodes:
+            if (node.color == 0):
+                blackCount += 1
+            else:
+                whiteCount += 1
+
+        if (blackCount != 0 and whiteCount != 0):
+            biColourIsland = islnd
+            break
+
+    islandColorMap = {}
     for i in range(island):
-        if (i in islandsToInvert):
-            islands1.append(i)
-        else:
-            islands2.append(i)
+        islandColorMap[i] = {0:[], 1:[]}
+        for node in islandsMap[i]:
+            islandColorMap[i][node.color].append(node)
 
+    if (biColourIsland != -1):
+        biColourIslandNodes = islandsMap[biColourIsland]
+        biColourIslandBlackNodeNum = islandColorMap[biColourIsland][0][0].num
+        biColourIslandWhiteNodeNum = islandColorMap[biColourIsland][1][0].num
 
+        for islnd, nodes in islandsMap.items():
+            if islnd == biColourIsland:
+                continue
 
-    pass
+            if islandColorMap[islnd][0]:
+                print(biColourIslandWhiteNodeNum, islandColorMap[islnd][0][0].num)
+            else:
+                print(biColourIslandBlackNodeNum, islandColorMap[islnd][1][0].num)
+    else:
+        #0 - white
+        #1 - black
+        whiteColourIsland = -1
+        blackColorIsland = -1
+
+        for islnd, nodes in islandsMap.items():
+            if (whiteColourIsland != -1 and blackColorIsland != -1):
+                break
+
+            if (whiteColourIsland == -1 and nodes[0].color == 0):
+                whiteColourIsland = islnd
+
+            if (blackColorIsland == -1 and nodes[0].color == 1):
+                blackColorIsland = islnd
+
+        if (whiteColourIsland != -1 and blackColorIsland != -1):
+            whiteNodeNum = islandsMap[whiteColourIsland][0].num
+            blackNodeNum = islandsMap[blackColorIsland][0].num
+
+            for islnd, nodes in islandsMap.items():
+                if (islnd == whiteColourIsland or islnd == blackColorIsland):
+                    continue
+
+                if (nodes[0].color == 0):
+                    print(blackNodeNum, nodes[0].num)
+                else:
+                    print(whiteNodeNum, nodes[0].num)
+
+            print(whiteNodeNum, blackNodeNum)
