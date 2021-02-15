@@ -38,6 +38,24 @@ def matrixMul(matrix1, matrix2):
 
     return result
 
+def matrixSum(matrix1, matrix2):
+    rows1 = len(matrix1)
+    cols1 = len(matrix1[0])
+
+    rows2 = len(matrix2)
+    cols2 = len(matrix2[0])
+
+    if (rows1 != rows2 or cols1 != cols1):
+        raise Exception("Not corresponding matrices")
+
+    result = [[0 for _ in range(rows1)] for _ in range(cols1)]
+
+    for i in range(rows1):
+        for j in range(cols2):
+            result[i][j] = matrix1[i][j] + matrix2[i][j]
+
+    return result
+
 def countExpectation(diceSides, probs):
     estimateExp = 0
     for val in range(diceSides):
@@ -46,6 +64,14 @@ def countExpectation(diceSides, probs):
 
 def countSqrExpectation(diceSides, stepProbs, transProbs, seqLen):
     sqrExp = 0
+
+    transMatrixPow = [transProbs]
+    for i in range(seqLen - 2):
+        transMatrixPow.append(matrixMul(transMatrixPow[-1], transProbs))
+
+    integrTransMatrix = [transMatrixPow[0]]
+    for i in range(1, len(transMatrixPow)):
+        integrTransMatrix.append(matrixSum(integrTransMatrix[-1], transMatrixPow[i]))
 
     for step1Index in range(seqLen):
         probs = stepProbs[step1Index]
@@ -56,8 +82,9 @@ def countSqrExpectation(diceSides, stepProbs, transProbs, seqLen):
         for i in range(diceSides):
             itrProbs[i][i] = probs[i]
 
-        for _ in range(step1Index + 1, seqLen):
-            itrProbs = matrixMul(itrProbs, transProbs)
+        if (seqLen - 2 - step1Index >= 0):
+            itrProbs = matrixMul(itrProbs, integrTransMatrix[seqLen - 2 - step1Index])
+
             for i in range(diceSides):
                 for j in range(diceSides):
                     sqrExp += (i + 1) * (j + 1) * 2 * itrProbs[i][j]
@@ -65,8 +92,10 @@ def countSqrExpectation(diceSides, stepProbs, transProbs, seqLen):
     return sqrExp
 
 if __name__ == '__main__':
-    diceSides = 6
-    probs = [0.12, 0.12, 0.1, 0.02, 0.14, 0.5]
+    #diceSides = 6
+    #probs = [0.12, 0.12, 0.1, 0.02, 0.14, 0.5]
+    diceSides = 3
+    probs = [0.05, 0.45, 0.5]
     seqLen = 10
 
     transitionProb = [[0 for _ in range(diceSides)] for _ in range(diceSides)]
