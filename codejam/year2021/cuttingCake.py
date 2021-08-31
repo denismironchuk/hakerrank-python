@@ -69,8 +69,6 @@ if __name__ == '__main__':
         segmentB = []
 
         currentLines = set()
-        extremumPoints = []
-        extremumValues = []
 
         for i in range(len(pointsX) - 1):
             x1 = pointsX[i]
@@ -88,22 +86,6 @@ if __name__ == '__main__':
             for line in currentLines:
                 segmentASum += line.sign * line.A * (line.k * (x1 + x2) + 2 * line.b) * (x2 - x1)
                 segmentBSum += line.sign * line.B * (line.k * (x1 + x2) + 2 * line.b) * (x2 - x1)
-
-                chisl -= (line.A + line.B) * line.sign * line.b
-                znam += (line.A + line.B) * line.sign * line.k
-
-            if znam != 0:
-                extremum = chisl/znam
-                if extremum > x1 and extremum < x2:
-                    extremumPoints.append(extremum)
-
-                    extremumValue = 0
-                    for line in currentLines:
-                        extremumValue += line.sign * line.A * (line.k * (x1 + extremum) + 2 * line.b) * (extremum - x1)
-                        extremumValue -= line.sign * line.B * (line.k * (extremum + x2) + 2 * line.b) * (x2 - extremum)
-
-                    extremumValue /= 2 * S
-                    extremumValues.append(extremumValue)
 
             segmentASum /= 2 * S
             segmentBSum /= 2 * S
@@ -123,4 +105,36 @@ if __name__ == '__main__':
         for i in range(len(pointsX)):
             candidates.append(abs(rightSums[i] - leftSums[i]))
 
-        print("!!!")
+        currentLines = set()
+
+        for i in range(len(pointsX) - 1):
+            x1 = pointsX[i]
+            x2 = pointsX[i + 1]
+            for line in pointXLines[x1]:
+                if line in currentLines:
+                    currentLines.remove(line)
+                else:
+                    currentLines.add(line)
+
+            chisl = 0
+            znam = 0
+            for line in currentLines:
+                chisl -= (line.A + line.B) * line.sign * line.b
+                znam += (line.A + line.B) * line.sign * line.k
+
+            if znam != 0:
+                extremum = chisl / znam
+                if extremum > x1 and extremum < x2:
+                    extremumValue = 0
+                    for line in currentLines:
+                        extremumValue += line.sign * line.A * (line.k * (x1 + extremum) + 2 * line.b) * (extremum - x1)
+                        extremumValue -= line.sign * line.B * (line.k * (extremum + x2) + 2 * line.b) * (x2 - extremum)
+
+                    extremumValue /= 2 * S
+                    extremumValue += rightSums[i]
+                    extremumValue -= leftSums[i + 1]
+
+                    candidates.append(abs(extremumValue))
+
+        candidates.sort()
+        print(candidates[0])
