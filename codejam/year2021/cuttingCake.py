@@ -1,3 +1,5 @@
+from fractions import *
+
 class Point(object):
     def __init__(self, x, y):
         self.x = x
@@ -17,8 +19,9 @@ class Line(object):
         self.B = B
         if p1.x != p2.x:
             self.sign = 1 if p2.x > p1.x else -1
-            self.k = (self.p2.y - self.p1.y) / (self.p2.x - self.p1.x)
+            self.k = Fraction(self.p2.y - self.p1.y, self.p2.x - self.p1.x)
             self.b = self.p1.y - self.k * self.p1.x
+            pass
 
 if __name__ == '__main__':
     T = int(input())
@@ -27,7 +30,7 @@ if __name__ == '__main__':
         n, w, h = map(int, input().split())
         p, q, r, s = map(int, input().split())
 
-        S = abs(p * s - q * r) / 2
+        S = Fraction(abs(p * s - q * r), 2)
         pointsX = []
         pointXLines = {}
 
@@ -79,10 +82,8 @@ if __name__ == '__main__':
                 else:
                     currentLines.add(line)
 
-            segmentASum = 0
-            segmentBSum = 0
-            chisl = 0
-            znam = 0
+            segmentASum = Fraction(0)
+            segmentBSum = Fraction(0)
             for line in currentLines:
                 segmentASum += line.sign * line.A * (line.k * (x1 + x2) + 2 * line.b) * (x2 - x1)
                 segmentBSum += line.sign * line.B * (line.k * (x1 + x2) + 2 * line.b) * (x2 - x1)
@@ -92,11 +93,11 @@ if __name__ == '__main__':
             segmentA.append(segmentASum)
             segmentB.append(segmentBSum)
 
-        leftSums = [0]
+        leftSums = [Fraction(0)]
         for seg in segmentA:
             leftSums.append(leftSums[-1] + seg)
 
-        rightSums = [0 for _ in range(len(segmentB) + 1)]
+        rightSums = [Fraction(0) for _ in range(len(segmentB) + 1)]
         for i in range(len(segmentB) - 1, -1, -1):
             rightSums[i] = rightSums[i + 1] + segmentB[i]
 
@@ -116,8 +117,8 @@ if __name__ == '__main__':
                 else:
                     currentLines.add(line)
 
-            chisl = 0
-            znam = 0
+            chisl = Fraction(0)
+            znam = Fraction(0)
             for line in currentLines:
                 chisl -= (line.A + line.B) * line.sign * line.b
                 znam += (line.A + line.B) * line.sign * line.k
@@ -125,16 +126,16 @@ if __name__ == '__main__':
             if znam != 0:
                 extremum = chisl / znam
                 if extremum > x1 and extremum < x2:
-                    extremumValue = 0
+                    extremumValue = Fraction(0)
                     for line in currentLines:
                         extremumValue += line.sign * line.A * (line.k * (x1 + extremum) + 2 * line.b) * (extremum - x1)
                         extremumValue -= line.sign * line.B * (line.k * (extremum + x2) + 2 * line.b) * (x2 - extremum)
 
                     extremumValue /= 2 * S
-                    extremumValue += rightSums[i]
-                    extremumValue -= leftSums[i + 1]
+                    extremumValue += leftSums[i]
+                    extremumValue -= rightSums[i + 1]
 
                     candidates.append(abs(extremumValue))
 
         candidates.sort()
-        print(candidates[0])
+        print("Case #{}: {}/{}".format(t, candidates[0].numerator, candidates[0].denominator))
