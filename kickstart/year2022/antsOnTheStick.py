@@ -13,11 +13,23 @@ if __name__ == '__main__':
         timeToFall = []
 
         leftSideToRightDirection, rightSideToLeftDirection = 0, 0
+        leftSideIndex, rightSideIndex = -1, -1
+
+        toLeftAnts = []
+        toRightAnts = []
 
         for i in range(n):
             _, _, dir = ants[i]
             if dir == 0:
+                toLeftAnts.append(ants[i])
                 rightSideToLeftDirection += 1
+                if (rightSideIndex == -1):
+                    rightSideIndex = i
+            else:
+                toRightAnts.append(ants[i])
+
+        toLeftIndex = -1
+        toRightIndex = -1
 
         for i in range(n):
             index, pos, dir = ants[i]
@@ -26,77 +38,22 @@ if __name__ == '__main__':
                 # to left
                 # <<<<<
                 rightSideToLeftDirection -= 1
+                toLeftIndex += 1
+            else:
+                toRightIndex += 1
 
             if dir == 0:
                 # go left <<<
                 if leftSideToRightDirection <= rightSideToLeftDirection:
-                    # falls from left end
-                    # |------------
-                    if leftSideToRightDirection == 0:
-                        timeToFall.append((index, pos))
-                    else:
-                        expectedPosition = 0
-                        k = i + 1
-                        while expectedPosition != leftSideToRightDirection:
-                            if (ants[k][2] == 0):
-                                expectedPosition += 1
-
-                            if (expectedPosition == leftSideToRightDirection):
-                                break
-
-                            k += 1
-
-                        timeToFall.append((index, ants[k][1]))
+                    timeToFall.append((index, toLeftAnts[toLeftIndex + leftSideToRightDirection][1]))
                 else:
-                    # falls from right end
-                    # -----------|
-                    expectedPosition = 0
-                    k = i
-                    while expectedPosition != rightSideToLeftDirection + 1:
-                        if (ants[k][2] == 1):
-                            expectedPosition += 1
-
-                        if (expectedPosition == rightSideToLeftDirection + 1):
-                            break
-
-                        k -= 1
-
-                    timeToFall.append((index, l - ants[k][1]))
-
+                    timeToFall.append((index, l - toRightAnts[toRightIndex - rightSideToLeftDirection][1]))
             else:
                 #go right
                 if leftSideToRightDirection >= rightSideToLeftDirection:
-                    # falls from right end
-                    # -------------|
-                    if rightSideToLeftDirection == 0:
-                        timeToFall.append((index, l - pos))
-                    else:
-                        expectedPosition = 0
-                        k = i - 1
-                        while expectedPosition != rightSideToLeftDirection:
-                            if (ants[k][2] == 1):
-                                expectedPosition += 1
-
-                            if (expectedPosition == rightSideToLeftDirection):
-                                break
-
-                            k -= 1
-
-                        timeToFall.append((index, l - ants[k][1]))
+                    timeToFall.append((index, l - toRightAnts[toRightIndex - rightSideToLeftDirection][1]))
                 else:
-                    #falls from left end
-                    expectedPosition = 0
-                    k = i
-                    while expectedPosition != leftSideToRightDirection + 1:
-                        if (ants[k][2] == 0):
-                            expectedPosition += 1
-
-                        if (expectedPosition == leftSideToRightDirection + 1):
-                            break
-
-                        k += 1
-
-                    timeToFall.append((index, ants[k][1]))
+                    timeToFall.append((index, toLeftAnts[toLeftIndex + leftSideToRightDirection + 1][1]))
 
             if dir == 1:
                 leftSideToRightDirection+=1
