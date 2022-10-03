@@ -12,18 +12,20 @@ if __name__ == '__main__':
 
         timeToFall = []
 
+        leftSideToRightDirection, rightSideToLeftDirection = 0, 0
+
+        for i in range(n):
+            _, _, dir = ants[i]
+            if dir == 0:
+                rightSideToLeftDirection += 1
+
         for i in range(n):
             index, pos, dir = ants[i]
-            leftSideToRightDirection, rightSideToLeftDirection = 0, 0
 
-            for j in range(n):
-                _, _, dir2 = ants[j]
-                if (j < i):
-                    if (dir2 == 1):
-                        leftSideToRightDirection += 1
-                elif (j > i):
-                    if (dir2 == 0):
-                        rightSideToLeftDirection += 1
+            if dir == 0:
+                # to left
+                # <<<<<
+                rightSideToLeftDirection -= 1
 
             if dir == 0:
                 # go left <<<
@@ -95,6 +97,9 @@ if __name__ == '__main__':
                         k += 1
 
                     timeToFall.append((index, ants[k][1]))
+
+            if dir == 1:
+                leftSideToRightDirection+=1
 
         timeToFall = sorted(timeToFall, key=lambda a: a[0])
         timeToFall = sorted(timeToFall, key=lambda a: a[1])
